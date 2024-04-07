@@ -1,0 +1,86 @@
+@startuml
+class User {
+    + First name
+    + Last name
+    + Email
+    + Password
+    + Phone
+    + CIN
+    + Image
+    + Role
+}
+
+class Citizen {
+    + Address
+}
+
+class Driver {
+    + Truck
+}
+
+class City {
+    + Name
+    + Postal code
+}
+
+class Location {
+    + GeoLocation
+    + City
+}
+
+class Truck {
+    + Number
+    + Model
+}
+
+class Incident {
+    + Content
+    + Image
+    + User
+}
+
+class Problem {
+    + Content
+    + Image
+}
+
+class GarbageType {
+    + Name
+    + Image
+}
+
+class VisitedLocation {
+    + Location
+    + Date
+    + Time
+}
+
+class Plan {
+    + Date
+    + GarbageType
+    + StartHour
+    + EndHour
+    + City
+    + Truck
+    + VisitedLocations
+}
+
+class Notification {
+    + Title
+    + Content
+    + Type
+    + User
+}
+
+User --|> Citizen
+User --|> Driver
+User -- Notification
+Citizen "1" -- "1" City
+Incident "1" -- "1" Driver
+Problem "1" -- "1" Citizen
+Problem "1" -- "1" City
+Plan "1" -- "1" City
+Plan "1" -- "1" Truck
+Plan "1" o-- "n" VisitedLocation
+VisitedLocation "1" -- "1" Location
+@enduml
