@@ -7,10 +7,7 @@ const locationSchema = new mongoose.Schema(
       long: { type: Number, required: true },
       required: true,
     },
-    city: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "City",
-    },
+
   },
   { timestamps: true }
 );

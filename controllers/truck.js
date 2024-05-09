@@ -4,6 +4,7 @@ exports.create = async (req, res) => {
   try {
     const truck = new Truck(req.body);
     const savedTruck = await truck.save();
+    await savedTruck.populate("driver");
     res.status(201).json({
       message: "Truck added successfully!",
       payload: savedTruck,
@@ -15,7 +16,7 @@ exports.create = async (req, res) => {
 
 exports.getAll = async (req, res) => {
   try {
-    const trucks = await Truck.find();
+    const trucks = await Truck.find().populate("driver");
     res.status(200).json({
       message: "Trucks fetched successfully!",
       payload: trucks,
@@ -50,6 +51,7 @@ exports.update = async (req, res) => {
     if (!updatedTruck) {
       return res.status(404).json({ message: "Truck not found" });
     }
+    await updatedTruck.populate("driver");
     res.status(200).json({
       message: "Truck updated successfully!",
       payload: updatedTruck,

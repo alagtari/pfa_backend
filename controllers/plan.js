@@ -4,6 +4,7 @@ exports.create = async (req, res) => {
   try {
     const plan = new Plan(req.body);
     const savedPlan = await plan.save();
+    await savedPlan.populate("truck city");
     res.status(201).json({
       message: "Plan added successfully!",
       payload: savedPlan,
@@ -15,7 +16,7 @@ exports.create = async (req, res) => {
 
 exports.getAll = async (req, res) => {
   try {
-    const plans = await Plan.find();
+    const plans = await Plan.find().populate("truck city");
     res.status(200).json({
       message: "Plans fetched successfully!",
       payload: plans,
@@ -42,11 +43,9 @@ exports.getById = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const updatedPlan = await Plan.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
+    const updatedPlan = await Plan.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    }).populate("truck city");
     if (!updatedPlan) {
       return res.status(404).json({ message: "Plan not found" });
     }

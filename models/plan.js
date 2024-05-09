@@ -13,14 +13,14 @@ const planSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Truck",
     },
-    garbageType: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "GarbageType",
-    },
+    garbageType: { type: String, required: true },
     visitedLocation: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "VisitedLocation",
+        location: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Location",
+        },
+        visited: { type: Boolean, default: false },
       },
     ],
   },

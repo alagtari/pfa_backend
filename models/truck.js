@@ -4,9 +4,10 @@ const truckSchema = new mongoose.Schema(
   {
     number: { type: String, required: true },
     model: { type: String, required: true },
+    capacity: { type: Number, required: true },
     driver: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Driver",
+      ref: "User",
     },
   },
   { timestamps: true }

@@ -6,7 +6,7 @@ const incidentSchema = new mongoose.Schema(
     image: { type: String },
     driver: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Driver",
+      ref: "Citizen",
     },
   },
   { timestamps: true }

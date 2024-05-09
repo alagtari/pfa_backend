@@ -1,6 +1,11 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+const authRoutes = require("./routes/auth");
+const driverRoutes = require("./routes/driver");
+const truckRoutes = require("./routes/truck");
+const cityRoutes = require("./routes/city");
+const planRoutes = require("./routes/plan");
 
 require("dotenv").config();
 app.use(express.urlencoded({ extended: true }));
@@ -48,5 +53,11 @@ app.get("/api/uploads/:fileName", (req, res) => {
     }
   });
 });
+
+app.use("/api/auth", authRoutes);
+app.use("/api/driver", driverRoutes);
+app.use("/api/truck", truckRoutes);
+app.use("/api/city", cityRoutes);
+app.use("/api/plan", planRoutes);
 
 module.exports = app;

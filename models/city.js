@@ -4,6 +4,12 @@ const citySchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     postalCode: { type: String, required: true },
+    locations: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Location",
+      },
+    ],
   },
   { timestamps: true }
 );
