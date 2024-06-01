@@ -4,9 +4,9 @@ const incidentSchema = new mongoose.Schema(
   {
     content: { type: String, required: true },
     image: { type: String },
-    driver: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Driver",
+      ref: "User",
     },
   },
   { timestamps: true }

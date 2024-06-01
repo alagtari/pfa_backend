@@ -17,7 +17,6 @@ exports.create = async (req, res) => {
 
     const room = await Room.findById(req.body.room);
     const [reciver] = room.members.filter((e) => e != userId);
-    console.log(reciver.toString());
 
     req.app
       .get("io")
@@ -28,7 +27,6 @@ exports.create = async (req, res) => {
       payload: savedMessageToSender,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -85,6 +83,62 @@ exports.getMessagesByRoomId = async (req, res) => {
       payload: processedMessages,
     });
   } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getDriverMessages = async (req, res) => {
+  try {
+    const { userId } = req.auth;
+    const [room] = await Room.find({ members: { $in: [userId] } });
+    let messages = await Message.find({ room: room._id });
+    let processedMessages = messages.map((message) => {
+      return {
+        ...message._doc,
+        sent: message.sender.toString() === userId.toString(),
+      };
+    });
+    res.json({
+      message: "Message fetched successfully!",
+      payload: processedMessages,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.sendDriverMessage = async (req, res) => {
+  try {
+    const { userId } = req.auth;
+    const [room] = await Room.find({ members: { $in: [userId] } });
+    console.log(room);
+    const message = new Message({
+      ...req.body,
+      room: room._id,
+      sender: userId,
+    });
+    savedMessage = await message.save();
+    const savedMessageToSender = {
+      ...savedMessage._doc,
+      sent: true,
+    };
+    const savedMessageToReciver = {
+      ...savedMessage._doc,
+      sent: false,
+    };
+
+    const [reciver] = room.members.filter((e) => e != userId);
+
+    req.app
+      .get("io")
+      .to(reciver.toString())
+      .emit("chat message", savedMessageToReciver);
+    res.status(201).json({
+      message: "Message added successfully!",
+      payload: savedMessageToSender,
+    });
+  } catch (error) {
+    // console.log(error);
     res.status(500).json({ message: error.message });
   }
 };

@@ -48,13 +48,11 @@ exports.getAll = async (req, res) => {
       delete truck.driver;
       return { ...item.toObject(), truck };
     });
-    console.log(traitedDrivers);
     res.status(200).json({
       message: "Drivers fetched successfully!",
       payload: traitedDrivers,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ message: error.message });
   }
 };

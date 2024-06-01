@@ -1,4 +1,5 @@
 const Plan = require("../../models/plan");
+const Location = require("../../models/location");
 const Truck = require("../../models/truck");
 const moment = require("moment");
 exports.getAll = async (req, res) => {
@@ -8,8 +9,6 @@ exports.getAll = async (req, res) => {
 
     const today = moment().startOf("day").toDate();
     const tomorrow = moment(today).add(2, "days").toDate();
-    console.log(today);
-    console.log(tomorrow);
     const [truck] = await Truck.find({ driver: userId });
     const plans = await Plan.find({
       truck: truck._id,
@@ -22,13 +21,11 @@ exports.getAll = async (req, res) => {
       { path: "city", populate: { path: "cityLocation locations" } },
       "visitedLocation",
     ]);
-    console.log(plans);
     res.status(200).json({
       message: "Plans fetched successfully!",
       payload: plans,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -47,7 +44,6 @@ exports.update = async (req, res) => {
       payload: plan,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -98,7 +94,9 @@ exports.visitLocation = async (req, res) => {
     }
 
     plan.visitedLocation.push(locationId);
+    const location = await Location.findById(locationId);
     await plan.save();
+    req.app.get("io").to(planId).emit("receive-visited-location", location);
 
     res.status(200).json({ message: "Location visited successfully" });
   } catch (error) {

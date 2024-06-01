@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
+const problemRoutes = require("./problem");
 const planRoutes = require("./plan");
-const incidentRoutes = require("./incident");
 
+router.use("/problem", problemRoutes);
 router.use("/plan", planRoutes);
-router.use("/incident", incidentRoutes);
 
 module.exports = router;

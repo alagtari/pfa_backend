@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const authRoutes = require("./routes/auth");
 const adminRoutes = require("./routes/admin/index");
 const driverRoutes = require("./routes/driver/index");
+const citizenRoutes = require("./routes/citizen/index");
 const messageRoutes = require("./routes/messages");
 
 require("dotenv").config();
@@ -11,6 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const path = require("path");
 const cors = require("cors");
+const { loggedMiddleware } = require("./middlewares/auth");
 
 app.use(cors());
 
@@ -52,8 +54,9 @@ app.get("/api/uploads/:fileName", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
-app.use("/api/driver", driverRoutes);
-app.use("/api/admin", adminRoutes);
+app.use("/api/driver", loggedMiddleware, driverRoutes);
+app.use("/api/admin", loggedMiddleware, adminRoutes);
+app.use("/api/citizen", loggedMiddleware, citizenRoutes);
 
 app.use("/api/message", messageRoutes);
 

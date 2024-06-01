@@ -1,4 +1,4 @@
-const Incident = require("../../models/incident");
+const Problem = require("../../models/problem");
 
 exports.create = async (req, res) => {
   try {
@@ -7,11 +7,11 @@ exports.create = async (req, res) => {
     if (req.file) {
       image = req.file.originalname;
     }
-    const incident = new Incident({ ...req.body, image, user: userId });
-    const savedIncident = await incident.save();
+    const problem = new Problem({ ...req.body, image, user: userId });
+    const savedProblem = await problem.save();
     res.status(201).json({
-      message: "Incident added successfully!",
-      payload: savedIncident,
+      message: "Problem added successfully!",
+      payload: savedProblem,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
