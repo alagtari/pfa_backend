@@ -2,10 +2,9 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const authRoutes = require("./routes/auth");
-const driverRoutes = require("./routes/driver");
-const truckRoutes = require("./routes/truck");
-const cityRoutes = require("./routes/city");
-const planRoutes = require("./routes/plan");
+const adminRoutes = require("./routes/admin/index");
+const driverRoutes = require("./routes/driver/index");
+const messageRoutes = require("./routes/messages");
 
 require("dotenv").config();
 app.use(express.urlencoded({ extended: true }));
@@ -23,9 +22,7 @@ db.on("error", (error) => {
   console.error("MongoDB connection error:", error);
 });
 
-db.once("open", () => {
-  console.log("Connected to MongoDB");
-});
+db.once("open", () => {});
 
 app.use(express.json());
 app.use("uploads", express.static("uploads"));
@@ -56,8 +53,8 @@ app.get("/api/uploads/:fileName", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/driver", driverRoutes);
-app.use("/api/truck", truckRoutes);
-app.use("/api/city", cityRoutes);
-app.use("/api/plan", planRoutes);
+app.use("/api/admin", adminRoutes);
+
+app.use("/api/message", messageRoutes);
 
 module.exports = app;

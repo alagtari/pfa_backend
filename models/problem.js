@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
-const incidentSchema = new mongoose.Schema(
+const problemSchema = new mongoose.Schema(
   {
     content: { type: String, required: true },
     image: { type: String },
-    driver: {
+    citizen: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Citizen",
     },
@@ -12,4 +12,4 @@ const incidentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Incident", incidentSchema);
+module.exports = mongoose.model("Problem", problemSchema);

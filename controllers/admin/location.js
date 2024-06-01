@@ -1,9 +1,14 @@
-const Location = require("../models/location");
+const Location = require("../../models/location");
+const City = require("../../models/city");
 
 exports.create = async (req, res) => {
   try {
-    const location = new Location(req.body);
+    const { longitude, latitude, cityId } = req.body;
+    const location = new Location({ longitude, latitude });
     const savedLocation = await location.save();
+    const city = await City.findById(cityId);
+    city.locations.push(savedLocation._id);
+    const savedCity = await city.save();
     res.status(201).json({
       message: "Location added successfully!",
       payload: savedLocation,

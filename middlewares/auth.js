@@ -18,7 +18,6 @@ module.exports.loggedMiddleware = (req, res, next) => {
       }
     });
   } catch (error) {
-    console.log("You have to sign in !");
     res.status(401).json({ error: "You have to sign in !" });
   }
 };

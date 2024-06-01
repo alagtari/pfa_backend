@@ -1,9 +1,20 @@
-const City = require("../models/city");
+const City = require("../../models/city");
+const Location = require("../../models/location");
 
 exports.create = async (req, res) => {
   try {
-    const city = new City(req.body);
+    const { name, postalCode, state, cityLocation } = req.body;
+    const location = new Location(cityLocation);
+    const savedLocation = await location.save();
+
+    const city = new City({
+      name,
+      postalCode,
+      state,
+      cityLocation: savedLocation._id,
+    });
     const savedCity = await city.save();
+    await savedCity.populate("cityLocation");
     res
       .status(201)
       .json({ message: "City added successfully!", payload: savedCity });
@@ -14,7 +25,7 @@ exports.create = async (req, res) => {
 
 exports.getAll = async (req, res) => {
   try {
-    const cities = await City.find();
+    const cities = await City.find().populate("cityLocation locations");
     res
       .status(200)
       .json({ message: "Cities fetched successfully!", payload: cities });

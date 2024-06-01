@@ -5,6 +5,11 @@ const planSchema = new mongoose.Schema(
     date: { type: Date, required: true },
     startHour: { type: Date, required: true },
     endHour: { type: Date, required: true },
+    status: {
+      type: String,
+      enum: ["NOT_STARTED", "IN_PROGRESS", "FINISHED", "CANCELLED"],
+      default: "NOT_STARTED",
+    },
     city: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "City",
@@ -16,11 +21,8 @@ const planSchema = new mongoose.Schema(
     garbageType: { type: String, required: true },
     visitedLocation: [
       {
-        location: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Location",
-        },
-        visited: { type: Boolean, default: false },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Location",
       },
     ],
   },

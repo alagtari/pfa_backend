@@ -1,10 +1,13 @@
-const Plan = require("../models/plan");
+const Plan = require("../../models/plan");
 
 exports.create = async (req, res) => {
   try {
     const plan = new Plan(req.body);
     const savedPlan = await plan.save();
-    await savedPlan.populate("truck city");
+    await savedPlan.populate([
+      { path: "truck", populate: { path: "driver" } },
+      { path: "city", populate: { path: "cityLocation locations" } },
+    ]);
     res.status(201).json({
       message: "Plan added successfully!",
       payload: savedPlan,
@@ -16,7 +19,12 @@ exports.create = async (req, res) => {
 
 exports.getAll = async (req, res) => {
   try {
-    const plans = await Plan.find().populate("truck city");
+    const plans = await Plan.find().populate([
+      { path: "truck", populate: { path: "driver" } },
+      { path: "city", populate: { path: "cityLocation locations" }},
+      "visitedLocation",
+
+    ]);
     res.status(200).json({
       message: "Plans fetched successfully!",
       payload: plans,
@@ -45,7 +53,10 @@ exports.update = async (req, res) => {
   try {
     const updatedPlan = await Plan.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
-    }).populate("truck city");
+    }).populate([
+      { path: "truck", populate: { path: "driver" } },
+      { path: "city", populate: { path: "cityLocation locations" } },
+    ]);
     if (!updatedPlan) {
       return res.status(404).json({ message: "Plan not found" });
     }

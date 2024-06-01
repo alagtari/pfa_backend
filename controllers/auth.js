@@ -37,8 +37,18 @@ exports.login = async (req, res) => {
 
 exports.signupCitizen = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, phone, cin, address } =
-      req.body;
+    const {
+      firstName,
+      lastName,
+      birthDate,
+      gender,
+      email,
+      password,
+      phone,
+      cin,
+      city,
+      street,
+    } = req.body;
     const user = await User.findOne({ email });
     if (user) {
       return res
@@ -56,13 +66,16 @@ exports.signupCitizen = async (req, res) => {
       email,
       phone,
       cin,
+      birthDate,
+      gender,
       image,
       password: hashedPassword,
       role: "citizen",
     });
     const savedUser = await newUser.save();
     const newCitizen = new Citizen({
-      address,
+      street,
+      city,
       user: savedUser._id,
       _id: savedUser._id,
     });
@@ -183,7 +196,6 @@ exports.resendCode = async (req, res) => {
 };
 exports.newPassword = async (req, res) => {
   try {
-    console.log(req.body);
     const { email, code, password } = req.body;
     const user = await User.findOne({ email });
     if (user) {

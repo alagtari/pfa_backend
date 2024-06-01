@@ -1,12 +1,13 @@
-const User = require("../models/user");
-const Truck = require("../models/truck");
+const User = require("../../models/user");
+const Truck = require("../../models/truck");
+const Room = require("../../models/chatroom");
 
 const bcrypt = require("bcrypt");
 
 exports.create = async (req, res) => {
   try {
+    const { userId } = req.auth;
     const { firstName, lastName, email, phone, cin } = req.body;
-    console.log(req.body);
     const user = await User.findOne({ email });
     if (user) {
       return res
@@ -24,7 +25,9 @@ exports.create = async (req, res) => {
       role: "driver",
     });
     const savedUser = await newUser.save();
-    delete savedUser.password; // Remove password field from savedUser
+    delete savedUser.password;
+    const room = new Room({ members: [savedUser._id, userId] });
+    await room.save();
     res
       .status(201)
       .json({ message: "Acount added successfuly", payload: savedUser });
@@ -36,11 +39,22 @@ exports.create = async (req, res) => {
 exports.getAll = async (req, res) => {
   try {
     const drivers = await User.find({ role: "driver" }).select("-password");
+    let trucks = await Truck.find();
+    let traitedDrivers = drivers.map((item) => {
+      let [truck] = trucks.filter((truck) => {
+        return truck.driver.toString() === item._id.toString();
+      });
+      truck = truck.toObject();
+      delete truck.driver;
+      return { ...item.toObject(), truck };
+    });
+    console.log(traitedDrivers);
     res.status(200).json({
       message: "Drivers fetched successfully!",
-      payload: drivers,
+      payload: traitedDrivers,
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 };

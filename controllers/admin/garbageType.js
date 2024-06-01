@@ -1,4 +1,4 @@
-const GarbageType = require("../models/garbageType");
+const GarbageType = require("../../models/garbageType");
 
 exports.create = async (req, res) => {
   try {
