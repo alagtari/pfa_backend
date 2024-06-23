@@ -1,12 +1,12 @@
 const Plan = require("../../models/plan");
 const Location = require("../../models/location");
 const Truck = require("../../models/truck");
+const Notification = require("../../models/notification");
 const moment = require("moment");
+
 exports.getAll = async (req, res) => {
   try {
-    // const { userId } = req.auth;
-    const userId = "664b850912d18de2b894bb79";
-
+    const { userId } = req.auth;
     const today = moment().startOf("day").toDate();
     const tomorrow = moment(today).add(2, "days").toDate();
     const [truck] = await Truck.find({ driver: userId });
@@ -59,6 +59,13 @@ exports.startMission = async (req, res) => {
 
     plan.status = "IN_PROGRESS";
     await plan.save();
+    const notification = new Notification({
+      title: "Mission started",
+      content: `A new ${plan.garbageType} mission started now `,
+      type: "MISSION",
+      city: plan.city,
+    });
+    await notification.save();
 
     res.status(200).json({ message: "Mission started successfully" });
   } catch (error) {

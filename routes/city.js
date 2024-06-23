@@ -1,8 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const controller = require("../../controllers/admin/problem");
+const controller = require("../controllers/citizen/city");
 
 router.get("/", controller.getAll);
-
 
 module.exports = router;

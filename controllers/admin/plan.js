@@ -1,5 +1,6 @@
 const Plan = require("../../models/plan");
-
+const Notification = require("../../models/notification");
+const moment = require("moment");
 exports.create = async (req, res) => {
   try {
     const plan = new Plan(req.body);
@@ -21,9 +22,8 @@ exports.getAll = async (req, res) => {
   try {
     const plans = await Plan.find().populate([
       { path: "truck", populate: { path: "driver" } },
-      { path: "city", populate: { path: "cityLocation locations" }},
+      { path: "city", populate: { path: "cityLocation locations" } },
       "visitedLocation",
-
     ]);
     res.status(200).json({
       message: "Plans fetched successfully!",
@@ -60,6 +60,15 @@ exports.update = async (req, res) => {
     if (!updatedPlan) {
       return res.status(404).json({ message: "Plan not found" });
     }
+    const date = moment(updatedPlan.date).format("dd-MM-yyyy");
+    const notification = new Notification({
+      title: "Mission rescheduled",
+      content: `The ${updatedPlan.garbageType} mission of ${date} is reschaduled `,
+      type: "RESCHEDULE",
+      city: updatedPlan.city,
+    });
+    await notification.save();
+
     res.status(200).json({
       message: "Plan updated successfully!",
       payload: updatedPlan,

@@ -1,7 +1,7 @@
 const Incident = require("../../models/incident");
 exports.getAll = async (req, res) => {
   try {
-    const incidents = await Incident.find();
+    const incidents = await Incident.find().populate("user");
     res.status(200).json({
       message: "Incidents fetched successfully!",
       payload: incidents,

@@ -3,6 +3,9 @@ const Truck = require("../../models/truck");
 const Room = require("../../models/chatroom");
 
 const bcrypt = require("bcrypt");
+const { driverAccountCode } = require("../../utils/driverAccountTemplate");
+const { sendEmail } = require("../../utils/mailsender");
+const { generatePassword } = require("../../utils/generatePassword");
 
 exports.create = async (req, res) => {
   try {
@@ -14,7 +17,8 @@ exports.create = async (req, res) => {
         .status(401)
         .json({ message: "Can't add an account with this email" });
     }
-    const hashedPassword = await bcrypt.hash("password", 10);
+    const password = generatePassword();
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       firstName,
       lastName,
@@ -28,10 +32,13 @@ exports.create = async (req, res) => {
     delete savedUser.password;
     const room = new Room({ members: [savedUser._id, userId] });
     await room.save();
+    sendEmail("Account Credentials", email, driverAccountCode(email, password));
+
     res
       .status(201)
       .json({ message: "Acount added successfuly", payload: savedUser });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -40,19 +47,24 @@ exports.getAll = async (req, res) => {
   try {
     const drivers = await User.find({ role: "driver" }).select("-password");
     let trucks = await Truck.find();
+    console.log(trucks);
     let traitedDrivers = drivers.map((item) => {
       let [truck] = trucks.filter((truck) => {
         return truck.driver.toString() === item._id.toString();
       });
-      truck = truck.toObject();
-      delete truck.driver;
-      return { ...item.toObject(), truck };
+      if (truck) {
+        truck = truck.toObject();
+        delete truck.driver;
+        return { ...item.toObject(), truck };
+      }
+      return { ...item.toObject() };
     });
     res.status(200).json({
       message: "Drivers fetched successfully!",
       payload: traitedDrivers,
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -117,6 +129,8 @@ exports.delete = async (req, res) => {
     if (!deletedDriver) {
       return res.status(404).json({ message: "Driver not found" });
     }
+    await Room.deleteOne({ members: { $in: [deletedDriver._id] } });
+
     res.status(200).json({ message: "Driver deleted successfully!" });
   } catch (error) {
     res.status(500).json({ message: error.message });

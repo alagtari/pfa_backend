@@ -6,6 +6,7 @@ const adminRoutes = require("./routes/admin/index");
 const driverRoutes = require("./routes/driver/index");
 const citizenRoutes = require("./routes/citizen/index");
 const messageRoutes = require("./routes/messages");
+const cityRoutes = require("./routes/city");
 
 require("dotenv").config();
 app.use(express.urlencoded({ extended: true }));
@@ -57,6 +58,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/driver", loggedMiddleware, driverRoutes);
 app.use("/api/admin", loggedMiddleware, adminRoutes);
 app.use("/api/citizen", loggedMiddleware, citizenRoutes);
+app.use("/api/city", cityRoutes);
 
 app.use("/api/message", messageRoutes);
 

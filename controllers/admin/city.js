@@ -26,6 +26,10 @@ exports.create = async (req, res) => {
 exports.getAll = async (req, res) => {
   try {
     const cities = await City.find().populate("cityLocation locations");
+    cities.forEach((city) => {
+      console.log(city.name);
+      console.log(city.locations);
+    });
     res
       .status(200)
       .json({ message: "Cities fetched successfully!", payload: cities });

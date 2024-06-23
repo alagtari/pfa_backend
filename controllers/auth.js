@@ -56,6 +56,7 @@ exports.signupCitizen = async (req, res) => {
         .json({ message: "Can't add an account with this email" });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
+    let image;
     if (req.file) {
       image = req.file.originalname;
     }
@@ -97,6 +98,7 @@ exports.signupDriver = async (req, res) => {
         .json({ message: "Can't add an account with this email" });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
+    let image;
     if (req.file) {
       image = req.file.originalname;
     }
@@ -236,6 +238,7 @@ exports.resetPassword = async (req, res) => {
 exports.updateProfile = async (req, res) => {
   try {
     const { userId } = req.auth;
+    let image;
     if (req.file) {
       image = req.file.originalname;
     }

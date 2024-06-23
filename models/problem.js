@@ -4,9 +4,10 @@ const problemSchema = new mongoose.Schema(
   {
     content: { type: String, required: true },
     image: { type: String },
-    citizen: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Citizen",
+      ref: "User",
+      required: true,
     },
   },
   { timestamps: true }
